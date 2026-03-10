@@ -11,6 +11,7 @@ import (
 func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 	api := r.Group("/api")
 
+	// Public routes
 	user.RegisterRoutes(api.Group("/users"), db)
 
 	protected := api.Group("/")

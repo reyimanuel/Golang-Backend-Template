@@ -75,6 +75,85 @@ go run ./cmd/server migrate
 go run ./cmd/server
 ```
 
+## Live Reload With Air
+
+This template already includes an `.air.toml` file, so you can use Air for automatic rebuild and restart during development.
+
+### What Air does
+
+Air watches your Go files, rebuilds the application when files change, and restarts the server automatically.
+
+In this project, Air is configured to:
+
+- build the app from `./cmd/server`
+- output the binary to `./tmp/main.exe`
+- watch Go and template-like files
+- ignore `tmp`, `vendor`, and test files
+
+### Install Air
+
+Install Air with Go:
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+After installation, make sure your Go bin directory is in your `PATH`.
+
+Typical Go bin locations:
+
+- Windows: `%USERPROFILE%\go\bin`
+- Linux/macOS: `$HOME/go/bin`
+
+To check whether Air is available:
+
+```bash
+air -v
+```
+
+### Run the project with Air
+
+From the project root, run:
+
+```bash
+air
+```
+
+Air will use the existing `.air.toml` file automatically.
+
+### Recommended first-time setup flow
+
+1. Copy `.env.example` to `.env`.
+2. Make sure your PostgreSQL database already exists.
+3. Make sure the key files in `keys/` match the `.env` paths.
+4. Run migration once with `go run ./cmd/server migrate`.
+5. Start development mode with `air`.
+
+### How the current Air config works
+
+The current `.air.toml` is set up for Windows-style binary output:
+
+- build command: `go build -o ./tmp/main.exe ./cmd/server/.`
+- output binary: `tmp\\main.exe`
+- watched extensions: `go`, `tpl`, `tmpl`, `html`
+
+If you are working on Linux or macOS, you may want to change the binary path and build output to use a non-`.exe` filename.
+
+Example:
+
+```toml
+bin = "tmp/main"
+cmd = "go build -o ./tmp/main ./cmd/server/."
+entrypoint = ["tmp/main"]
+```
+
+### Common issues
+
+- `air: command not found`: your Go bin directory is not in `PATH`
+- app exits immediately: check `.env`, database connection, and key file paths
+- migration not applied: run `go run ./cmd/server migrate` before starting `air`
+- binary path mismatch on Linux/macOS: update `.air.toml` to remove `.exe`
+
 ## CLI Commands
 
 The application entrypoint supports a small CLI from `cmd/server/main.go`.
